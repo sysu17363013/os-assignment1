@@ -90,30 +90,30 @@ void philosopher2 (void* arg) {
     int left = i;
     int right = (i + 1) % N;
     while (1) {
-        printf("哲学家%d正在思考问题\n", i);
+        printf("philosopher %d is thinking\n", i);
         delay(50000);
 
-        printf("哲学家%d饿了\n", i);
+        printf("philosopher %d is hungry\n", i);
         if (i % 2 == 0) {//偶数哲学家，先右后左
             sem_wait(&chopsticks[right]);
-            printf("哲学家%d拿起了%d号筷子,现在只有一支筷子,不能进餐\n", i, right);
+            printf("philosopher %d pick up no.%d chopstick,now he only has one chopstick,he can't eat now\n", i, right);
             sem_wait(&chopsticks[left]);
-            printf("哲学家%d拿起了%d号筷子, 现在有两支筷子,开始进餐\n", i, left);
+            printf("philosopher %d pick up no.%d chopstick,now he two chopsticks,he starts to eat\n", i, left);
             delay(50000);
             sem_post(&chopsticks[left]);
-            printf("哲学家%d放下了%d号筷子\n", i, left);
+            printf("philosopher %d put down no.%d chopstick\n", i, left);
             sem_post(&chopsticks[right]);
-            printf("哲学家%d放下了%d号筷子\n", i, right);
+            printf("philosopher %d put down no.%d chopstick\n", i, right);
         } else {//奇数哲学家，先左后又
             sem_wait(&chopsticks[left]);
-            printf("哲学家%d拿起了%d号筷子, 现在有两支筷子,开始进餐\n", i, left);
+            printf("philosopher %d pick up no.%d chopstick,now he two chopsticks,he starts to eat\n", i, left);
             sem_wait(&chopsticks[right]);
-            printf("哲学家%d拿起了%d号筷子,现在只有一支筷子,不能进餐\n", i, right);
+            printf("philosopher %d pick up no.%d chopstick,now he only has one chopstick,he can't eat now\n", i, right);
             delay(50000);
             sem_post(&chopsticks[right]);
-            printf("哲学家%d放下了%d号筷子\n", i, right);
+            printf("philosopher %d put down no.%d chopstick\n", i, right);
             sem_post(&chopsticks[left]);
-            printf("哲学家%d放下了%d号筷子\n", i, left);
+            printf("philosopher %d put down no.%d chopstick\n", i, left);
         }
     }
 }
@@ -133,7 +133,7 @@ int main (int argc, char **argv) {
     }
 
     for (int i=0; i<N; i++) {
-        pthread_create(&PHD[i], NULL, (void*)philosopher, &philosophers[i]);
+        pthread_create(&PHD[i], NULL, (void*)philosopher2, &philosophers[i]);
     }
     for (int i=0; i<N; i++) {
         pthread_join(PHD[i], NULL);
