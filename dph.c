@@ -32,59 +32,7 @@ void delay (int len) {
     }
 }
 
-//交换函数：目前为发现bug
-void xchg(int *x, int *y) {
-    __asm__("xchgl %0, %1" : "=r" (*x) : "m" (*y));
-}
-
-//这个函数使用的解决办法是最多允许四个哲学家拿起左筷子
-void philosopher (void* arg) {
-    int i = *(int *)arg;
-    int left = i;
-    int right = (i + 1) % N;
-    int leftkey;
-    int rightkey;
-    while (1) {
-        leftkey = 1;
-        rightkey = 1;
-
-
-        printf("philosopher %d is thinking\n", i);
-        delay(50000);
-
-        printf("philosopher %d is hungry\n", i);
-        sem_wait(&r);
-
-        //sem_wait(&chopsticks[left]);
-        //pthread_mutex_lock(&chopsticks[left]);
-        do {
-            xchg(&leftkey, &islocked[left]);
-        }while (leftkey);
-        printf("philosopher %d pick up no.%d chopstick,now he only has one chopstick,he can't eat now\n", i, left);
-
-        //sem_wait(&chopsticks[right]);
-        //pthread_mutex_lock(&chopsticks[right]);
-        do {
-            xchg(&rightkey, &islocked[right]);
-        }while (rightkey);
-        printf("philosopher %d pick up no.%d chopstick,now he two chopsticks,he starts to eat\n", i, right);
-        delay(50000);
-
-        //sem_post(&chopsticks[left]);
-        //pthread_mutex_unlock(&chopsticks[left]);
-        islocked[left] = 0;
-        printf("philosopher %d put down no.%d chopstick\n", i, left);
-
-        //sem_post(&chopsticks[right]);
-        //pthread_mutex_unlock(&chopsticks[right]);
-        islocked[right] = 0;
-        printf("philosopher %d put down no.%d chopstick\n", i, right);
-
-        sem_post(&r);
-    }
-}
-
-//这个函数使用的解决办法是奇数号哲学家先拿左筷子再拿右筷子，而偶数号哲学家相反。
+//奇数号哲学家先拿左筷子再拿右筷子，而偶数号哲学家相反。
 void philosopher2 (void* arg) {
     int i = *(int *)arg;
     int left = i;
